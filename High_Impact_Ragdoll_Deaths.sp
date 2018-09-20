@@ -6,21 +6,34 @@
 
 #pragma newdecls required
 
+#define PLUGIN_VERSION "1.0"
 
 static Handle hCvar_fFallVec = null;
 static float fMaxFallVec;
+
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
+{
+	if(GetEngineVersion() != Engine_Left4Dead2 )
+	{
+		strcopy(error, err_max, "Plugin only supports Left 4 Dead 2");
+		return APLRes_SilentFailure;
+	}
+	return APLRes_Success;
+}
 
 public Plugin myinfo =
 {
 	name = "High_Impact_Ragdoll_Deaths",
 	author = "Lux",
 	description = "High impact falls that kill you as a survivor will now ragdoll and no defibbing.",
-	version = "1.0",
-	url = "-"
+	version = PLUGIN_VERSION,
+	url = "https://forums.alliedmods.net/showthread.php?p=2615988"
 };
 
 public void OnPluginStart()
 {
+	CreateConVar("hird_version", PLUGIN_VERSION, "High_Impact_Ragdoll_Deaths version", FCVAR_NOTIFY|FCVAR_DONTRECORD);
+	
 	hCvar_fFallVec = FindConVar("survivor_incap_max_fall_damage");
 	if(hCvar_fFallVec == null)
 		SetFailState("Unable to find survivor_incap_max_fall_damage");
