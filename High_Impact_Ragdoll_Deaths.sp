@@ -6,10 +6,11 @@
 
 #pragma newdecls required
 
-#define PLUGIN_VERSION "1.0"
+#define PLUGIN_VERSION "1.0.1"
 
 static Handle hCvar_fFallVec = null;
 static float fMaxFallVec;
+
 
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
 {
@@ -33,7 +34,6 @@ public Plugin myinfo =
 public void OnPluginStart()
 {
 	CreateConVar("hird_version", PLUGIN_VERSION, "High_Impact_Ragdoll_Deaths version", FCVAR_NOTIFY|FCVAR_DONTRECORD);
-	
 	hCvar_fFallVec = FindConVar("survivor_incap_max_fall_damage");
 	if(hCvar_fFallVec == null)
 		SetFailState("Unable to find survivor_incap_max_fall_damage");
@@ -67,4 +67,13 @@ public void OnTakeDamagePost(int victim, int attacker, int inflictor, float dama
 		return;
 	
 	SetEntProp(victim, Prop_Send, "m_isFallingFromLedge", 1, 1);
+	SDKHook(victim, SDKHook_SetTransmit, CheckIfAlive);
+}
+
+public void CheckIfAlive(int iEntity, int iClient)
+{
+	if(IsPlayerAlive(iEntity))
+		SetEntProp(iEntity, Prop_Send, "m_isFallingFromLedge", 0, 1);
+	
+	SDKUnhook(iEntity, SDKHook_SetTransmit, CheckIfAlive);
 }
