@@ -57,6 +57,9 @@ public void OnTakeDamagePost(int victim, int attacker, int inflictor, float dama
 	if(damagetype & ~DMG_FALL)
 		return;
 	
+	if(GetEntProp(victim, Prop_Send, "m_isFallingFromLedge", 1))
+		return;
+	
 	if(GetClientTeam(victim) != 2 && IsFakeClient(victim))
 	{
 		SDKUnhook(victim, SDKHook_OnTakeDamageAlivePost, OnTakeDamagePost);
